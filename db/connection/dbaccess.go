@@ -2,11 +2,13 @@ package connection
 
 import (
 	"database/sql"
-	"os"
 	"log"
+	"os"
+
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
 )
 
+//GCPのMySQL接続に必要な情報
 type ConnectionInfo struct {
 	DbEnv      string
 	DbUser     string

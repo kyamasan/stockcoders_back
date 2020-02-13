@@ -8,6 +8,7 @@ import (
 )
 
 func GetVolumeData(cd string) (y string, e error) {
+	//DB接続情報
 	db := connection.DbAccess(connection.GetDbConnection())
 	defer db.Close()
 

@@ -11,28 +11,34 @@ import (
 	"github.com/joho/godotenv"
 )
 
+//チャートデータ(json)を返すメソッド
 func dataHandler(w http.ResponseWriter, r *http.Request) {
 	chartData, _ := db.GetData(r.FormValue("cd"))
 	json.NewEncoder(w).Encode(chartData)
 }
 
+//出来高データ(json)を返すメソッド
 func volumeHandler(w http.ResponseWriter, r *http.Request) {
 	volume, _ := db.GetVolumeData(r.FormValue("cd"))
 	json.NewEncoder(w).Encode(volume)
 }
 
+//日付データ(json)を返すメソッド
 func dateHandler(w http.ResponseWriter, r *http.Request) {
 	date, _ := db.GetDateData(r.FormValue("cd"))
 	json.NewEncoder(w).Encode(date)
 }
 
 func main() {
-	// allowedOrigins := handlers.AllowedOrigins([]string{"https://stockcoders.appspot.com"})
-	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
+	//CORS(Cross-Origin Resource Sharing)設定
+	allowedOrigins := handlers.AllowedOrigins([]string{"https://stockcoders.appspot.com"})
 	allowedMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	allowedHeaders := handlers.AllowedHeaders([]string{"X-Requested-With"})
 
+	//Dotenvを使用
 	godotenv.Load()
+
+	//handlerの設定
 	router := mux.NewRouter()
 	router.HandleFunc("/data/", dataHandler)
 	router.HandleFunc("/volume/", volumeHandler)

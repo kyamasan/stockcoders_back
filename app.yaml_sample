@@ -1,0 +1,10 @@
+runtime: go112
+instance_class: F1
+
+//本番環境情報をセット
+env_variables:
+  DB_USER: "username"
+  DB_PASSWORD: "password"
+  SERVER_PORT: "portnumber"
+  DB_ENV: "projectname:region:instancename"
+  DB_NAME: "databasename"

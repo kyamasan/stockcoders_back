@@ -1,12 +1,5 @@
 package query
 
-func GetSelectVolume() string {
-	return `SELECT Volume AS volume
-	FROM StockData
-	WHERE CD = ? 
-	ORDER BY date`
-}
-
 func GetSelectData() string {
 	return `SELECT  Date,
 	CAST(OpeningPrice AS Decimal(20,2)),
@@ -16,6 +9,13 @@ func GetSelectData() string {
 	FROM StockData
 	WHERE CD = ?
 	ORDER BY Date`
+}
+
+func GetSelectVolume() string {
+	return `SELECT Volume AS volume
+	FROM StockData
+	WHERE CD = ? 
+	ORDER BY date`
 }
 
 func GetSelectDate() string {
