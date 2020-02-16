@@ -8,12 +8,16 @@ import (
 )
 
 func GetDateData(cd string) (x string, e error) {
-	db := connection.DbAccess(connection.GetDbConnection())
+	//DB接続情報
+	db, err := connection.DbAccess(connection.GetDbConnection())
 	defer db.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rows, err := db.Query(query.GetSelectDate(), cd)
 	if err != nil {
-		log.Fatal("Wrong Query")
+		log.Fatal(err)
 	}
 	var date string
 	var xaxis []string
@@ -21,7 +25,7 @@ func GetDateData(cd string) (x string, e error) {
 	for rows.Next() {
 		err := rows.Scan(&date)
 		if err != nil {
-			log.Fatal("Scan Failure")
+			log.Fatal(err)
 		}
 		xaxis = append(xaxis, date)
 	}

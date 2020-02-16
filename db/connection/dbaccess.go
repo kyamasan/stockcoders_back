@@ -2,7 +2,6 @@ package connection
 
 import (
 	"database/sql"
-	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
@@ -25,12 +24,9 @@ func GetDbConnection() ConnectionInfo {
 	}
 }
 
-func DbAccess(con ConnectionInfo) (db *sql.DB) {
+func DbAccess(con ConnectionInfo) (db *sql.DB, e error) {
 	cfg := mysql.Cfg(con.DbEnv, con.DbUser, con.DbPassword)
 	cfg.DBName = con.DbName
 	db, err := mysql.DialCfg(cfg)
-	if err != nil {
-		log.Fatal("Error connecting server")
-	}
-	return db
+	return db, err
 }

@@ -18,12 +18,15 @@ type Price struct {
 }
 
 func GetData(cd string) (data string, e error) {
-	db := connection.DbAccess(connection.GetDbConnection())
+	db, err := connection.DbAccess(connection.GetDbConnection())
 	defer db.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rows, err := db.Query(query.GetSelectData(), cd)
 	if err != nil {
-		log.Fatal("Wrong Query")
+		log.Fatal(err)
 	}
 
 	var prices []Price
@@ -36,7 +39,7 @@ func GetData(cd string) (data string, e error) {
 	for rows.Next() {
 		err := rows.Scan(&date, &openingPrice, &highPrice, &lowPrice, &closingPrice)
 		if err != nil {
-			log.Fatal("Scan Failure")
+			log.Fatal(err)
 		}
 
 		price := Price{

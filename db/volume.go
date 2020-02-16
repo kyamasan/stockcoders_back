@@ -9,12 +9,15 @@ import (
 
 func GetVolumeData(cd string) (y string, e error) {
 	//DB接続情報
-	db := connection.DbAccess(connection.GetDbConnection())
+	db, err := connection.DbAccess(connection.GetDbConnection())
 	defer db.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	rows, err := db.Query(query.GetSelectVolume(), cd)
 	if err != nil {
-		log.Fatal("Wrong Query")
+		log.Fatal(err)
 	}
 	var volume float32
 	var yaxis []float32
@@ -22,7 +25,7 @@ func GetVolumeData(cd string) (y string, e error) {
 	for rows.Next() {
 		err := rows.Scan(&volume)
 		if err != nil {
-			log.Fatal("Scan Failure")
+			log.Fatal(err)
 		}
 		yaxis = append(yaxis, volume)
 	}
