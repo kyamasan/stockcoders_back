@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 	"os"
-	"stockcoder/server/db"
+	"strconv"
+
+	"./db"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -23,17 +25,27 @@ func volumeHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(volume)
 }
 
-//日付データ(json)を返すメソッド
-func dateHandler(w http.ResponseWriter, r *http.Request) {
-	date, _ := db.GetDateData(r.FormValue("cd"))
-	json.NewEncoder(w).Encode(date)
+func addHandler(w http.ResponseWriter, r *http.Request) {
+	cd := r.FormValue("cd")
+	date := r.FormValue("date")
+	start, _ := strconv.Atoi(r.FormValue("start"))
+	high, _ := strconv.Atoi(r.FormValue("high"))
+	low, _ := strconv.Atoi(r.FormValue("low"))
+	close, _ := strconv.Atoi(r.FormValue("close"))
+	db.AddPriceData(cd, date, start, high, low, close)
+}
+
+func removeHandler(w http.ResponseWriter, r *http.Request) {
+	cd := r.FormValue("cd")
+	date := r.FormValue("date")
+	db.RemovePriceData(cd, date)
 }
 
 func main() {
 	//CORS(Cross-Origin Resource Sharing)設定
-	allowedOrigins := handlers.AllowedOrigins([]string{"https://stockcoders.appspot.com"})
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
 	allowedMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-	allowedHeaders := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	allowedHeaders := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type"})
 
 	//Dotenvを使用
 	godotenv.Load()
@@ -42,6 +54,7 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/data/", dataHandler)
 	router.HandleFunc("/volume/", volumeHandler)
-	router.HandleFunc("/date/", dateHandler)
+	router.HandleFunc("/add/", addHandler)
+	router.HandleFunc("/remove/", removeHandler)
 	http.ListenAndServe(":"+os.Getenv("SERVER_PORT"), handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders)(router))
 }

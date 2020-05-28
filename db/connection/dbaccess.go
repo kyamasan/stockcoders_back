@@ -4,29 +4,30 @@ import (
 	"database/sql"
 	"os"
 
-	"github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 //GCPのMySQL接続に必要な情報
 type ConnectionInfo struct {
-	DbEnv      string
 	DbUser     string
 	DbPassword string
+	DbEnv      string
 	DbName     string
+	DbPort     string
 }
 
-func GetDbConnection() ConnectionInfo {
+func getDbConnection() ConnectionInfo {
 	return ConnectionInfo{
-		DbEnv:      os.Getenv("DB_ENV"),
 		DbUser:     os.Getenv("DB_USER"),
 		DbPassword: os.Getenv("DB_PASSWORD"),
+		DbEnv:      os.Getenv("DB_ENV"),
 		DbName:     os.Getenv("DB_NAME"),
+		DbPort:     os.Getenv("DB_PORT"),
 	}
 }
 
-func DbAccess(con ConnectionInfo) (db *sql.DB, e error) {
-	cfg := mysql.Cfg(con.DbEnv, con.DbUser, con.DbPassword)
-	cfg.DBName = con.DbName
-	db, err := mysql.DialCfg(cfg)
+func DbAccess() (db *sql.DB, e error) {
+	con := getDbConnection()
+	db, err := sql.Open("mysql", con.DbUser+":"+con.DbPassword+"@tcp("+con.DbEnv+":"+con.DbPort+")/"+con.DbName)
 	return db, err
 }

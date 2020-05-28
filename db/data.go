@@ -3,8 +3,10 @@ package db
 import (
 	"encoding/json"
 	"log"
-	"stockcoder/server/db/connection"
-	"stockcoder/server/db/query"
+
+	"./query"
+
+	"./connection"
 )
 
 type StockData struct {
@@ -18,7 +20,7 @@ type Price struct {
 }
 
 func GetData(cd string) (data string, e error) {
-	db, err := connection.DbAccess(connection.GetDbConnection())
+	db, err := connection.DbAccess()
 	defer db.Close()
 	if err != nil {
 		log.Fatal(err)

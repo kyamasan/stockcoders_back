@@ -3,13 +3,14 @@ package db
 import (
 	"encoding/json"
 	"log"
-	"stockcoder/server/db/connection"
-	"stockcoder/server/db/query"
+
+	"./connection"
+	"./query"
 )
 
 func GetVolumeData(cd string) (y string, e error) {
 	//DB接続情報
-	db, err := connection.DbAccess(connection.GetDbConnection())
+	db, err := connection.DbAccess()
 	defer db.Close()
 	if err != nil {
 		log.Fatal(err)
